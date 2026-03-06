@@ -1,0 +1,124 @@
+# This file will automatically update with entries for new content after a build and reload.
+
+Items: {
+	StonSword: {
+		DisplayName: 石剑
+		Tooltip:
+			'''
+			测试用
+			换个行
+			嘿嘿
+			'''
+	}
+
+	BrilliantStone: {
+		// 这里的键名必须与你的物品类名完全一致
+		DisplayName: 辉石
+		Tooltip: 一块散发着内蕴光芒的神秘水晶
+	}
+
+	PureBrrilliantStone: {
+		DisplayName: 纯净辉石
+		Tooltip: 纯净的辉石，散发着柔和的光芒
+	}
+
+	EXPressureFurnace: {
+		$parentVal: 高压超炉
+		DisplayName: 高压超炉
+		Tooltip: ""
+	}
+
+	UltrapureBrilliantStone: {
+		DisplayName: 至纯辉石
+		Tooltip: 极度提纯的辉石产物，散发着危险的光
+	}
+
+	HyperCore: {
+		DisplayName: 高能核心
+		Tooltip: 高能蠕虫的能量来源，其内部流淌的似乎是纯净的液体辉石
+	}
+
+	BrilliantWelder: {
+		DisplayName: 辉石焊枪
+		Tooltip: 把辉石作为工具，太酷了！
+	}
+
+	ConcentratedBrilliantLiquid: {
+		DisplayName: 浓缩辉石液
+		Tooltip:
+			'''
+			应该没人会想尝试喝下这种东西...
+			对吧？对吧？!
+			'''
+	}
+
+	BrilliantPulseEmitter: {
+		DisplayName: 辉石脉冲发射器
+		Tooltip: 保护你不被辉石感染...轻微的...
+	}
+
+	BrilliantCarapace: {
+		DisplayName: 辉石虫壳
+		Tooltip: 坚硬的辉石虫壳，比看上去要轻
+	}
+
+	ResentmentOfBrilliantCyst: {
+		Tooltip: 辉石虫的怨念
+		DisplayName: 召唤辉石虫女皇...
+	}
+}
+
+Tiles: {
+	BrilliantStoneTile.MapEntry: 辉石原矿
+
+	EXPressureFurnaceTile: {
+		$parentVal: 高压超炉
+		MapEntry: 高压超炉
+	}
+
+	PureBrilliantStoneTile: {
+		$parentVal: 纯净辉石
+		MapEntry: 纯净辉石矿
+	}
+
+	UltrapureBrilliantStoneTile: {
+		$parentVal: 至纯辉石
+		MapEntry: 至纯辉石
+	}
+}
+
+Biomes.BrilliantBiome.TownNPCDialogueName: 辉石环境
+
+NPCs: {
+	HyperWormHead.DisplayName: 高能蠕虫
+	HyperWormBody.DisplayName: 高能蠕虫
+	HyperWormTail.DisplayName: 高能蠕虫
+	HyperSlime.DisplayName: 辉石虫
+	HyperSlimeInside.DisplayName: 辉石内核虫
+	BrilliantCystQueen.DisplayName: 辉石虫女皇
+	QueenGuard.DisplayName: 女皇禁卫
+}
+
+Buffs: {
+	BrilliantInfection: {
+		DisplayName: 辉石感染
+		Description: 辉石正在尝试将你的身体变成它们的一部分
+	}
+
+	ReversePulseBuff: {
+		DisplayName: 反向辉石脉冲
+		Description: 处于辉石环境时，无效化5层及以下的辉石感染
+	}
+
+	BrilliantStun: {
+		DisplayName: Ⅱ形感染
+		Description: 辉石感染每层额外造成1点伤害
+	}
+}
+
+Conditions.InBrilliantBiome: 处于辉石生物群落中
+
+Projectiles: {
+	HyperWormLaser.DisplayName: 高能能量
+	QueensDecree.DisplayName: 女皇旨意
+}

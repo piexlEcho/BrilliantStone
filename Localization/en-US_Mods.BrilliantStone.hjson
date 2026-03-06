@@ -1,0 +1,120 @@
+# This file will automatically update with entries for new content after a build and reload.
+
+Items: {
+	StonSword: {
+		DisplayName: Ston Sword
+		Tooltip:
+			'''
+			Template of an item
+			Replacing this tooltip is duty 
+			It's snowing on Mt.Fuji
+			'''
+	}
+
+	BrilliantStone: {
+		// 这里的键名必须与你的物品类名完全一致
+		DisplayName: Brilliant Stone
+		Tooltip: A mysterious crystal radiating inner light
+	}
+
+	PureBrrilliantStone: {
+		DisplayName: Pure Brilliant Stone
+		Tooltip: A crystal purifiede, radiating a gentle glow
+	}
+
+	EXPressureFurnace: {
+		$parentVal: EX-pressure Furnace
+		DisplayName: EX-Pressure Furnace
+		Tooltip: ""
+	}
+
+	UltrapureBrilliantStone: {
+		DisplayName: Ultrapure Brilliant Stone
+		Tooltip: ""
+	}
+
+	HyperCore: {
+		DisplayName: Hyper Core
+		Tooltip: The energy source of the Hyper Worm, its interior seems to flow with pure liquid Brilliant Stone.
+	}
+
+	BrilliantWelder: {
+		DisplayName: Brilliant Welder
+		Tooltip: Using pyroxene as a tool, so cool!
+	}
+
+	ConcentratedBrilliantLiquid: {
+		DisplayName: Concentrated brilliant liquid
+		Tooltip: Nobody would want to try drinking this stuff...right? Right?!
+	}
+
+	BrilliantPulseEmitter: {
+		DisplayName: Brilliant Pulse Emitter
+		Tooltip: Protect you from being infected by Brilliant Stone... mild...
+	}
+
+	BrilliantCarapace: {
+		DisplayName: Brilliant Carapace
+		Tooltip: Hyper brillianter shell, it is lighter than it looks.
+	}
+
+	ResentmentOfBrilliantCyst: {
+		Tooltip: Resentment of brilliant cyst
+		DisplayName: Resentment Of Brilliant Cyst
+	}
+}
+
+Tiles: {
+	BrilliantStoneTile.MapEntry: Brilliant Stone
+
+	EXPressureFurnaceTile: {
+		$parentVal: EX PressureFurnace
+		MapEntry: E X Pressure Furnace Tile
+	}
+
+	PureBrilliantStoneTile: {
+		$parentVal: Pure Brilliant Stone
+		MapEntry: Pure Brilliant Stone Tile
+	}
+
+	UltrapureBrilliantStoneTile: {
+		$parentVal: Ultrapure Brilliant Stone
+		MapEntry: Ultrapure Brilliant Stone Tile
+	}
+}
+
+Biomes.BrilliantBiome.TownNPCDialogueName: the Brilliant Biome
+
+NPCs: {
+	HyperWormHead.DisplayName: HyperWorm
+	HyperWormBody.DisplayName: HyperWorm
+	HyperWormTail.DisplayName: HyperWorm
+	HyperSlime.DisplayName: Hyper Brillianter
+	HyperSlimeInside.DisplayName: Hyper Core Brillianter
+	BrilliantCystQueen.DisplayName: Brilliant Cyst Queen
+	QueenGuard.DisplayName: Queen Guard
+}
+
+Buffs: {
+	BrilliantInfection: {
+		DisplayName: Brilliant Infection
+		Description: The Stone are trying to make you part of them
+	}
+
+	ReversePulseBuff: {
+		DisplayName: Reverse brilliant pulse
+		Description: When in a brilliant Biome, nullify pyroxene infections at 5 stack or less.
+	}
+
+	BrilliantStun: {
+		DisplayName: Ⅱ Infection
+		Description: Brilliant Infection deals an additional 1 damage per stack.
+	}
+}
+
+Conditions.InBrilliantBiome: In Brilliant Biome
+
+Projectiles: {
+	HyperWormLaser.DisplayName: Hyper Laser
+	QueensDecree.DisplayName: Queens Decree
+}
