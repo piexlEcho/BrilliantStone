@@ -7,7 +7,7 @@ using BrilliantStone.Content.Projectiles;
 using BrilliantStone.Content.Players;
 using BrilliantStone.Content.Buffs;
 
-namespace BrilliantStone.Content.Items
+namespace BrilliantStone.Content.Items.Weapons
 {
     public class BrilliantWelder : ModItem
     {

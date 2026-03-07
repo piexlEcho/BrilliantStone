@@ -62,6 +62,11 @@ Items: {
 		Tooltip: Resentment of brilliant cyst
 		DisplayName: Resentment Of Brilliant Cyst
 	}
+
+	BrilliantDagger: {
+		DisplayName: Brilliant Dagger
+		Tooltip: A dagger made of pure Brilliant Stone. Beneath its rough exterior flows a special energy.
+	}
 }
 
 Tiles: {
@@ -117,4 +122,5 @@ Conditions.InBrilliantBiome: In Brilliant Biome
 Projectiles: {
 	HyperWormLaser.DisplayName: Hyper Laser
 	QueensDecree.DisplayName: Queens Decree
+	BrilliantDaggerProj.DisplayName: Brilliant Dagger Proj
 }
