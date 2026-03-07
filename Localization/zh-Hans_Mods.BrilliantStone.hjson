@@ -71,6 +71,21 @@ Items: {
 		DisplayName: 光辉匕首
 		Tooltip: 一把由纯粹的纯净辉石打造的匕首。在其粗糙的外表下，流淌着特殊的能量。
 	}
+
+	CystQueenCore: {
+		DisplayName: 女皇核心
+		Tooltip: ""
+	}
+
+	BrilliantDaggerRoyal: {
+		DisplayName: 女皇辉光
+		Tooltip: 荣耀属于辉石虫女皇！
+	}
+
+	QueenGland: {
+		DisplayName: 女皇腺体
+		Tooltip: ""
+	}
 }
 
 Tiles: {
@@ -119,6 +134,11 @@ Buffs: {
 		DisplayName: Ⅱ形感染
 		Description: 辉石感染每层额外造成1点伤害
 	}
+
+	QueenGuardBuff: {
+		DisplayName: 女皇腺体
+		Description: 召唤女皇禁卫保护自己
+	}
 }
 
 Conditions.InBrilliantBiome: 处于辉石生物群落中
@@ -126,5 +146,7 @@ Conditions.InBrilliantBiome: 处于辉石生物群落中
 Projectiles: {
 	HyperWormLaser.DisplayName: 高能能量
 	QueensDecree.DisplayName: 女皇旨意
-	// BrilliantDaggerProj.DisplayName: Brilliant Dagger Proj
+	BrilliantDaggerProj.DisplayName: 光辉匕首
+	BrilliantDaggerProj2.DisplayName: 女皇辉光
+	QueenGuardMinion.DisplayName: 女皇禁卫
 }

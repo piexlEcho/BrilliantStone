@@ -89,9 +89,9 @@ namespace BrilliantStone.Content.Tiles
         public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
         {
             if (fail) return;
-            int itemType = ModContent.ItemType<Content.Items.PureBrrilliantStone>(); // 注意物品名拼写
-            int amount = 1;
-            Item.NewItem(new Terraria.DataStructures.EntitySource_TileBreak(i, j), i * 16, j * 16, 16, 16, itemType, amount);
+            //int itemType = ModContent.ItemType<Content.Items.PureBrrilliantStone>(); // 注意物品名拼写
+            //int amount = 1;
+            //Item.NewItem(new Terraria.DataStructures.EntitySource_TileBreak(i, j), i * 16, j * 16, 16, 16, itemType, amount);
         }
     }
 }

@@ -102,10 +102,10 @@ namespace BrilliantStone.Content.Tiles
         // 掉落对应物品
         public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)
         {
-            if (fail) return;
-            int itemType = ModContent.ItemType<Content.Items.UltrapureBrilliantStone>();
-            int amount = 1;
-            Item.NewItem(new Terraria.DataStructures.EntitySource_TileBreak(i, j), i * 16, j * 16, 16, 16, itemType, amount);
+            if (fail) return; // 如果挖掘失败（如被保护），不掉落物品
+            //int itemType = ModContent.ItemType<Content.Items.UltrapureBrilliantStone>();
+            //int amount = 1;
+            //Item.NewItem(new Terraria.DataStructures.EntitySource_TileBreak(i, j), i * 16, j * 16, 16, 16, itemType, amount);
         }
     }
 }

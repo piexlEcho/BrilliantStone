@@ -67,6 +67,21 @@ Items: {
 		DisplayName: Brilliant Dagger
 		Tooltip: A dagger made of Pure Brilliant Stone. Beneath its rough exterior flows a special energy.
 	}
+
+	CystQueenCore: {
+		DisplayName: Queen Core
+		Tooltip: ""
+	}
+
+	BrilliantDaggerRoyal: {
+		DisplayName: Brilliant Dagger Royal
+		Tooltip: All glory to the Cyst Queen!
+	}
+
+	QueenGland: {
+		DisplayName: Queen Gland
+		Tooltip: ""
+	}
 }
 
 Tiles: {
@@ -115,6 +130,11 @@ Buffs: {
 		DisplayName: Ⅱ Infection
 		Description: Brilliant Infection deals an additional 1 damage per stack.
 	}
+
+	QueenGuardBuff: {
+		DisplayName: Queen Guard
+		Description: Summon the Queen Guard to protect yourself
+	}
 }
 
 Conditions.InBrilliantBiome: In Brilliant Biome
@@ -122,5 +142,7 @@ Conditions.InBrilliantBiome: In Brilliant Biome
 Projectiles: {
 	HyperWormLaser.DisplayName: Hyper Laser
 	QueensDecree.DisplayName: Queens Decree
-	BrilliantDaggerProj.DisplayName: Brilliant Dagger Proj
+	BrilliantDaggerProj.DisplayName: Brilliant Dagger
+	BrilliantDaggerProj2.DisplayName: Queen glory
+	QueenGuardMinion.DisplayName: Queen Guard Minion
 }
