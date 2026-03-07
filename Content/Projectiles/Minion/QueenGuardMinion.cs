@@ -9,31 +9,31 @@ namespace BrilliantStone.Content.Projectiles.Minion
 {
     public class QueenGuardMinion : ModProjectile
     {
-        // 攻击冷却计时器（使用 localAI[0]）
-        private ref float AttackCooldown => ref Projectile.localAI[0];
+        // 武器传入的基础伤害，存储在 ai[1]
+        private float BaseDamage => Projectile.ai[1];
 
         public override void SetStaticDefaults()
         {
-            Main.projFrames[Type] = 5; // 蝙蝠有5帧动画
-            ProjectileID.Sets.MinionTargettingFeature[Type] = true; // 允许鞭子标记目标
+            Main.projFrames[Type] = 5;
+            ProjectileID.Sets.MinionTargettingFeature[Type] = true;
         }
 
         public override void SetDefaults()
         {
             Projectile.width = 28;
             Projectile.height = 24;
-            Projectile.tileCollide = false;     // 不碰撞物块
+            Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
-            Projectile.netImportant = true;      // 网络同步重要
-            Projectile.friendly = true;          // 对敌人造成伤害
+            Projectile.netImportant = true;
+            Projectile.friendly = true;
             Projectile.hostile = false;
-            Projectile.minion = true;            // 标记为随从
-            Projectile.minionSlots = 1f;          // 占用1个召唤栏
-            Projectile.penetrate = -1;            // 无限穿透
-            Projectile.timeLeft = 36000;          // 存在时间（足够长，由主人管理）
-            Projectile.aiStyle = -1;               // 不使用原版AI
-            Projectile.usesLocalNPCImmunity = true; // 使用本地无敌帧，防止多段命中
-            Projectile.localNPCHitCooldown = 20;   // 对同一NPC的伤害间隔（帧）
+            Projectile.minion = true;
+            Projectile.minionSlots = 1f;
+            Projectile.penetrate = -1;
+            Projectile.timeLeft = 36000;
+            Projectile.aiStyle = -1;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 20;
         }
 
         public override void AI()
@@ -45,27 +45,42 @@ namespace BrilliantStone.Content.Projectiles.Minion
                 return;
             }
 
-            // 确保buff存在
+            // 确保召唤 buff 存在
             if (player.HasBuff(ModContent.BuffType<QueenGuardBuff>()))
-            {
                 Projectile.timeLeft = 2;
-            }
 
-            // ----- 目标选择（优先鞭子标记，其次自动索敌）-----
-            float maxDetectDistance = 800f;       // 自动索敌范围
-            float returnDistance = 1500f;          // 玩家与目标距离超过此值则强制返回
+            // ----- 获取感染层数，计算强化数值（服务器和客户端同步执行）-----
+            int infectionStacks = 0;
+            if (player.HasBuff(ModContent.BuffType<BrilliantInfection>()))
+                infectionStacks = player.GetModPlayer<BrilliantPlayer>().infectionStacks;
+            infectionStacks = (int)MathHelper.Clamp(infectionStacks, 0, 5); // 最多5层
+
+            // 伤害加成（每层 +2，上限 +10）
+            int bonusDamage = infectionStacks * 2;
+            if (bonusDamage > 10) bonusDamage = 10;
+            Projectile.damage = (int)BaseDamage + bonusDamage;
+
+            // 攻击间隔缩短（每层 -2 帧，下限 5）
+            int baseCooldown = 20;
+            int minCooldown = 5;
+            int newCooldown = baseCooldown - infectionStacks * 2;
+            if (newCooldown < minCooldown) newCooldown = minCooldown;
+            Projectile.localNPCHitCooldown = newCooldown;
+
+            // 移动速度加成（每层 +10%，上限 +50%）
+            float speedMultiplier = 1f + infectionStacks * 0.1f;
+            if (speedMultiplier > 1.5f) speedMultiplier = 1.5f;
+
+            // ----- 目标选择 -----
+            float maxDetectDistance = 800f;
+            float returnDistance = 1500f;
             NPC target = null;
 
-            // 先检查鞭子标记的目标（原版自动赋值到 OwnerMinionAttackTargetNPC）
             NPC markedTarget = Projectile.OwnerMinionAttackTargetNPC;
             if (markedTarget != null && markedTarget.active && !markedTarget.friendly && markedTarget.CanBeChasedBy())
-            {
-                // 检查标记目标是否在射程内（也可以不考虑范围，直接追击）
                 target = markedTarget;
-            }
             else
             {
-                // 自动搜索最近敌人
                 float sqrMaxDist = maxDetectDistance * maxDetectDistance;
                 foreach (NPC npc in Main.npc)
                 {
@@ -81,67 +96,55 @@ namespace BrilliantStone.Content.Projectiles.Minion
                 }
             }
 
-            // 如果存在目标，检查玩家与目标的距离是否过大
             if (target != null)
             {
                 float playerToTargetDist = Vector2.Distance(player.Center, target.Center);
                 if (playerToTargetDist > returnDistance)
-                {
-                    target = null; // 距离过远，强制丢失仇恨
-                }
+                    target = null;
             }
 
             // ----- 移动逻辑 -----
             Vector2 moveDirection = Vector2.Zero;
             float speed = 0f;
-            float inertia = 20f; // 惯性系数，越大转向越慢
+            float inertia = 20f;
 
             if (target != null)
             {
-                // 有目标：直接飞向目标
                 moveDirection = target.Center - Projectile.Center;
                 moveDirection.Normalize();
-                speed = 10f; // 追击速度
+                speed = 10f * speedMultiplier;
             }
             else
             {
-                // 无目标：围绕玩家飞行（画圆）
-                // 计算理想位置：以玩家为中心，半径 80 像素的圆上，随时间移动
+                // 围绕玩家飞行
                 float radius = 80f;
-                float angle = Projectile.ai[0]; // 使用 ai[0] 存储当前角度
-                // 每帧增加角度，产生绕圈效果
+                float angle = Projectile.ai[0];
                 angle += 0.05f;
                 if (angle > MathHelper.TwoPi) angle -= MathHelper.TwoPi;
                 Projectile.ai[0] = angle;
 
-                Vector2 desiredPos = player.Center + new Vector2((float)System.Math.Cos(angle) * radius, (float)System.Math.Sin(angle) * radius * 0.5f); // 垂直压缩使圈更扁，更像飞行
+                Vector2 desiredPos = player.Center + new Vector2((float)System.Math.Cos(angle) * radius, (float)System.Math.Sin(angle) * radius * 0.5f);
                 moveDirection = desiredPos - Projectile.Center;
-                if (moveDirection.Length() > 10f) // 距离较远时直接飞过去
+                if (moveDirection.Length() > 10f)
                 {
                     moveDirection.Normalize();
-                    speed = 8f;
+                    speed = 8f * speedMultiplier;
                 }
                 else
                 {
-                    // 距离很近时减速，避免抖动
                     moveDirection = Vector2.Zero;
                     Projectile.velocity *= 0.9f;
                 }
             }
 
-            // 应用移动
             if (moveDirection != Vector2.Zero)
             {
-                // 平滑转向
                 Projectile.velocity = (Projectile.velocity * (inertia - 1) + moveDirection * speed) / inertia;
             }
 
-            // 限制最大速度
-            float maxSpeed = 12f;
+            float maxSpeed = 12f * speedMultiplier;
             if (Projectile.velocity.Length() > maxSpeed)
-            {
                 Projectile.velocity = Vector2.Normalize(Projectile.velocity) * maxSpeed;
-            }
 
             // ----- 动画和旋转 -----
             Projectile.frameCounter++;
@@ -153,20 +156,15 @@ namespace BrilliantStone.Content.Projectiles.Minion
                     Projectile.frame = 0;
             }
 
-            // 根据速度方向旋转（模仿蝙蝠）
             if (Projectile.velocity != Vector2.Zero)
-            {
                 Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
-            }
         }
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
+            // 可根据需要添加命中效果，例如施加感染，但原版 QueenGuard 已处理，这里留空
         }
 
-        public override bool MinionContactDamage()
-        {
-            return true; // 允许接触伤害
-        }
+        public override bool MinionContactDamage() => true;
     }
 }
