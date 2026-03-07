@@ -104,7 +104,7 @@ namespace BrilliantStone.Content.Tiles
         {
             if (fail) return;
             int itemType = ModContent.ItemType<Content.Items.UltrapureBrilliantStone>();
-            int amount = Main.rand.Next(1, 3); // 掉落1-2个
+            int amount = 1;
             Item.NewItem(new Terraria.DataStructures.EntitySource_TileBreak(i, j), i * 16, j * 16, 16, 16, itemType, amount);
         }
     }

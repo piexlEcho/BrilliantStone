@@ -112,6 +112,7 @@ namespace BrilliantStone.Content.Items.Weapons
         {
             CreateRecipe()
                 .AddIngredient<PureBrrilliantStone>(5)      // 消耗 5 个纯净辉石
+                .AddIngredient<BrilliantCarapace>(5)    // 消耗 5 个辉石甲壳
                 .AddTile(ModContent.TileType<Content.Tiles.EXPressureFurnaceTile>())
                 .Register();
         }

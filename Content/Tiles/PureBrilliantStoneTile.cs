@@ -90,7 +90,7 @@ namespace BrilliantStone.Content.Tiles
         {
             if (fail) return;
             int itemType = ModContent.ItemType<Content.Items.PureBrrilliantStone>(); // 注意物品名拼写
-            int amount = Main.rand.Next(1, 4); // 掉落1-3个
+            int amount = 1;
             Item.NewItem(new Terraria.DataStructures.EntitySource_TileBreak(i, j), i * 16, j * 16, 16, 16, itemType, amount);
         }
     }

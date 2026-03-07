@@ -8,7 +8,7 @@ namespace BrilliantStone.Content.Projectiles
     public class BrilliantDaggerProj : ModProjectile
     {
         // 重力加速度（每帧增加的垂直速度）
-        private const float Gravity = 0.01f;
+        private const float Gravity = 0.08f;
 
         public override void SetStaticDefaults()
         {

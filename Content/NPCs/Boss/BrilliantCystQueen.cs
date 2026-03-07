@@ -612,10 +612,13 @@ namespace BrilliantStone.Content.NPCs.Boss
         {
             if (Main.rand.NextFloat() <= 0.5f)
             {
-                int itemType = ModContent.ItemType<Items.BrilliantCarapace>();
+                int itemType = ModContent.ItemType<Items.BrilliantCarapace>(); // 50%概率掉落辉石甲壳
                 int amount = Main.rand.Next(1, 3);
                 Item.NewItem(NPC.GetSource_Death(), NPC.getRect(), itemType, amount);
             }
+            int itemTypehaveto = ModContent.ItemType<Items.CystQueenCore>();
+            int amounthaveto = Main.rand.Next(1, 2);
+            Item.NewItem(NPC.GetSource_Death(), NPC.getRect(), itemTypehaveto, amounthaveto);
         }
 
         public override void ModifyNPCLoot(NPCLoot npcLoot) { }
