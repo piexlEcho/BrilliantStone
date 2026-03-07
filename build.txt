@@ -1,4 +1,4 @@
 displayName = BrilliantStone – The Hive Awakens
 author = Echo
 includeSource = true
-version = 0.167
+version = 0.170
