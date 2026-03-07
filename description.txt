@@ -1,2 +1,15 @@
-It's playable now, but still under development... 
-New terrain and new mobs have been added.
+Look! 
+A completely new terrain and biome—Brilliant Stone—use it to create entirely new industrial systems.
+
+And completely new monsters and mechanics!
+
+[quote=tModLoader BrilliantStone]
+Developed By Echo[/quote]
+
+Note: While this mod is playable, it is still under development. Please feel free to provide feedback if you encounter any bugs or other unexpected issues.
+
+Current Content: 3 types of Brilliant Stone monsters, 1 type of boss, 1 type of derivative boss summon,
+
+3 types of buff mechanics, 1 type of environment, 1 type of weapon, 1 type of accessory, 3 types of minerals.
+
+Future Updates: More weapons, more accessories, new armor, new events.
