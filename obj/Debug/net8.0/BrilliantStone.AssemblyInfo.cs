@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BrilliantStone")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d8c965a62f761be5968ceb941b328816293aeb7f")]
 [assembly: System.Reflection.AssemblyProductAttribute("BrilliantStone")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BrilliantStone")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
