@@ -37,11 +37,11 @@ namespace BrilliantStone.Content.Items.Weapons
             Item.useAnimation = BaseUseTime;
             Item.autoReuse = true;                   // 按住连续挥舞
             Item.noMelee = true;                      // 物品本身不造成近战伤害，全部由射弹负责
-            Item.noUseGraphic = false;                  // 使用时隐藏物品本身，仅显示射弹
+            Item.noUseGraphic = true;                  // 使用时隐藏物品本身，仅显示射弹
 
             // 射弹相关（匕首挥出的“剑尖”）
             Item.shoot = ModContent.ProjectileType<BrilliantDaggerProj>();
-            Item.shootSpeed = 2.5f;                     // 基础射速，影响攻击距离
+            Item.shootSpeed = 6.5f;                     // 基础射速，影响攻击距离
 
             // 音效
             Item.UseSound = SoundID.Item1;               // 近战挥动音效

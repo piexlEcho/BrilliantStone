@@ -68,8 +68,8 @@ Items: {
 	}
 
 	BrilliantDagger: {
-		// DisplayName: Brilliant Dagger
-		// Tooltip: A dagger made of pure Brilliant Stone. Beneath its rough exterior flows a special energy.
+		DisplayName: 光辉匕首
+		Tooltip: 一把由纯粹的纯净辉石打造的匕首。在其粗糙的外表下，流淌着特殊的能量。
 	}
 }
 
