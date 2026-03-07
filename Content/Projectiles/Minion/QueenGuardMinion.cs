@@ -15,7 +15,7 @@ namespace BrilliantStone.Content.Projectiles.Minion
         public override void SetStaticDefaults()
         {
             Main.projFrames[Type] = 5; // 蝙蝠有5帧动画
-            ProjectileID.Sets.MinionTargettingFeature[Type] = true; // 允许右键点击切换目标
+            ProjectileID.Sets.MinionTargettingFeature[Type] = true; // 允许鞭子标记目标
         }
 
         public override void SetDefaults()
@@ -51,52 +51,88 @@ namespace BrilliantStone.Content.Projectiles.Minion
                 Projectile.timeLeft = 2;
             }
 
-            // 寻找目标（优先选择玩家右键点击的目标）
-            NPC target = Projectile.OwnerMinionAttackTargetNPC;
-            if (target == null || !target.active || target.friendly || target.dontTakeDamage)
+            // ----- 目标选择（优先鞭子标记，其次自动索敌）-----
+            float maxDetectDistance = 800f;       // 自动索敌范围
+            float returnDistance = 1500f;          // 玩家与目标距离超过此值则强制返回
+            NPC target = null;
+
+            // 先检查鞭子标记的目标（原版自动赋值到 OwnerMinionAttackTargetNPC）
+            NPC markedTarget = Projectile.OwnerMinionAttackTargetNPC;
+            if (markedTarget != null && markedTarget.active && !markedTarget.friendly && markedTarget.CanBeChasedBy())
             {
-                // 自动寻找最近敌人
-                float maxDist = 800f;
-                target = null;
+                // 检查标记目标是否在射程内（也可以不考虑范围，直接追击）
+                target = markedTarget;
+            }
+            else
+            {
+                // 自动搜索最近敌人
+                float sqrMaxDist = maxDetectDistance * maxDetectDistance;
                 foreach (NPC npc in Main.npc)
                 {
-                    if (npc.active && !npc.friendly && npc.CanBeChasedBy() && Vector2.Distance(Projectile.Center, npc.Center) < maxDist)
+                    if (npc.active && !npc.friendly && npc.CanBeChasedBy())
                     {
-                        maxDist = Vector2.Distance(Projectile.Center, npc.Center);
-                        target = npc;
+                        float sqrDist = Vector2.DistanceSquared(npc.Center, Projectile.Center);
+                        if (sqrDist < sqrMaxDist)
+                        {
+                            sqrMaxDist = sqrDist;
+                            target = npc;
+                        }
                     }
                 }
             }
 
-            // ----- 移动逻辑（模仿蝙蝠AI）-----
-            float speed = 8f;
-            float inertia = 20f;
+            // 如果存在目标，检查玩家与目标的距离是否过大
+            if (target != null)
+            {
+                float playerToTargetDist = Vector2.Distance(player.Center, target.Center);
+                if (playerToTargetDist > returnDistance)
+                {
+                    target = null; // 距离过远，强制丢失仇恨
+                }
+            }
+
+            // ----- 移动逻辑 -----
             Vector2 moveDirection = Vector2.Zero;
+            float speed = 0f;
+            float inertia = 20f; // 惯性系数，越大转向越慢
 
             if (target != null)
             {
-                // 有目标时向目标移动
+                // 有目标：直接飞向目标
                 moveDirection = target.Center - Projectile.Center;
                 moveDirection.Normalize();
-                speed = 10f; // 追击速度更快
+                speed = 10f; // 追击速度
             }
             else
             {
-                // 无目标时随机移动（类似蝙蝠）
-                if (Projectile.ai[1] <= 0f)
-                {
-                    Projectile.ai[1] = Main.rand.Next(60, 180); // 随机停留时间
-                    Projectile.ai[0] = Main.rand.NextFloat(-MathHelper.Pi, MathHelper.Pi); // 随机方向
-                }
-                Projectile.ai[1]--;
+                // 无目标：围绕玩家飞行（画圆）
+                // 计算理想位置：以玩家为中心，半径 80 像素的圆上，随时间移动
+                float radius = 80f;
+                float angle = Projectile.ai[0]; // 使用 ai[0] 存储当前角度
+                // 每帧增加角度，产生绕圈效果
+                angle += 0.05f;
+                if (angle > MathHelper.TwoPi) angle -= MathHelper.TwoPi;
+                Projectile.ai[0] = angle;
 
-                moveDirection = new Vector2((float)System.Math.Cos(Projectile.ai[0]), (float)System.Math.Sin(Projectile.ai[0]));
-                speed = 6f;
+                Vector2 desiredPos = player.Center + new Vector2((float)System.Math.Cos(angle) * radius, (float)System.Math.Sin(angle) * radius * 0.5f); // 垂直压缩使圈更扁，更像飞行
+                moveDirection = desiredPos - Projectile.Center;
+                if (moveDirection.Length() > 10f) // 距离较远时直接飞过去
+                {
+                    moveDirection.Normalize();
+                    speed = 8f;
+                }
+                else
+                {
+                    // 距离很近时减速，避免抖动
+                    moveDirection = Vector2.Zero;
+                    Projectile.velocity *= 0.9f;
+                }
             }
 
             // 应用移动
             if (moveDirection != Vector2.Zero)
             {
+                // 平滑转向
                 Projectile.velocity = (Projectile.velocity * (inertia - 1) + moveDirection * speed) / inertia;
             }
 
@@ -122,25 +158,10 @@ namespace BrilliantStone.Content.Projectiles.Minion
             {
                 Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
             }
-
-            // ----- 攻击冷却更新（自动攻击由碰撞触发）-----
-            // 攻击间隔已在 SetDefaults 中用 localNPCHitCooldown 控制
         }
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            // 命中时给玩家施加感染（同QueenGuard逻辑）
-            Player player = Main.player[Projectile.owner];
-            if (player.whoAmI == Main.myPlayer && player.active)
-            {
-                player.GetModPlayer<BrilliantPlayer>().AddInfectionStack(120); // 2秒感染
-            }
-
-            // 60%概率给敌人施加震慑效果（5秒）
-            if (Main.rand.NextFloat() <= 0.6f)
-            {
-                target.AddBuff(ModContent.BuffType<BrilliantStun>(), 300);
-            }
         }
 
         public override bool MinionContactDamage()
