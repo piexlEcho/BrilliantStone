@@ -141,9 +141,9 @@ namespace BrilliantStone.Content.NPCs.Boss
         {
             NPC.width = 86;
             NPC.height = 76;
-            NPC.damage = 27;                           // 降低本体伤害
+            NPC.damage = 18;                           // 降低本体伤害
             NPC.defense = 10;
-            NPC.lifeMax = 4000;
+            NPC.lifeMax = 2500;
             NPC.HitSound = SoundID.NPCHit1;
             NPC.DeathSound = SoundID.NPCDeath1;
             NPC.knockBackResist = 0f;
