@@ -10,10 +10,10 @@ namespace BrilliantStone.Content.Projectiles
     public class QueensDecree : ModProjectile
     {
         private const float MaxHomingDistance = 500f;   // 最大追踪距离
-        private const float HomingStrength = 0.05f;      // 追踪强度（已提高至0.2，转弯更灵活）
+        private const float HomingStrength = 0.07f;      // 追踪强度（已提高至0.2，转弯更灵活）
 
         // 弹幕基础速度（可在此调整）
-        private float projectileSpeed = 6f;
+        private float projectileSpeed = 8f;
 
         public override void SetStaticDefaults()
         {

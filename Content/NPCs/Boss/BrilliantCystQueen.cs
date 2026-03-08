@@ -48,9 +48,9 @@ namespace BrilliantStone.Content.NPCs.Boss
 
         // 阶段持续时间（帧）
         private const int HoverDuration = 60;       // 悬浮过渡时间
-        private const int ShootDuration = 240;       // 射击阶段持续4秒
+        private const int ShootDuration = 140;       // 射击阶段持续2秒
         private const int SpawnDuration = 300;       // 召唤阶段持续5秒
-        private const int DashDuration = 160;        // 冲刺阶段总时长（含预备和多次冲刺）
+        private const int DashDuration = 350;        // 冲刺阶段总时长（含预备和多次冲刺）
 
         // 攻击阶段顺序循环（Hover后依次执行Shoot、Spawn、Dash，然后回到Hover）
         private int attackIndex = 0;                  // 0=Shoot, 1=Spawn, 2=Dash
@@ -82,14 +82,18 @@ namespace BrilliantStone.Content.NPCs.Boss
         private int dashSubTimer = 0;
         private int dashCount = 0;                    // 已完成冲刺次数
         private const int PrepareTime = 30;            // 预备帧数
-        private const int DashTime = 20;                // 每次冲刺持续时间
-        private const int PauseTime = 40;               // 冲刺间停顿
-        private const int MaxDashes = 3;                // 最大冲刺次数
+        private const int DashTime = 30;                // 每次冲刺持续时间
+        private const int PauseTime = 20;               // 冲刺间停顿
+        private const int MaxDashes = 5;                // 最大冲刺次数
+
+        // 移除固定的冲刺模式数组，改为实时计算方向
+        // 新增：当前冲刺的固定方向（每次冲刺开始时根据玩家位置计算）
+        private Vector2 dashFixedDir;
 
         // ----- 攻击阶段内计时器（用于Shoot/Spawn的周期动作）-----
         private int actionTimer = 0;
-        private const int ShootInterval = 40;           // 射击间隔40帧
-        private const int SpawnInterval = 60;           // 召唤间隔60帧
+        private const int ShootInterval = 60;           // 射击间隔60帧
+        private const int SpawnInterval = 40;           // 召唤间隔40帧
 
         // ----- 离场计时器 -----
         private int leaveTimer = 0;
@@ -137,7 +141,7 @@ namespace BrilliantStone.Content.NPCs.Boss
         {
             NPC.width = 86;
             NPC.height = 76;
-            NPC.damage = 15;                           // 降低本体伤害
+            NPC.damage = 27;                           // 降低本体伤害
             NPC.defense = 10;
             NPC.lifeMax = 4000;
             NPC.HitSound = SoundID.NPCHit1;
@@ -279,7 +283,8 @@ namespace BrilliantStone.Content.NPCs.Boss
         private void ShootBehavior(Player player, float baseSpeed)
         {
             // 移动：简单保持Hover状态（复用Hover逻辑，但可适当调整）
-            HoverBehavior(player, baseSpeed * 0.8f); // 射击时稍微减速
+            float speedchange = Main.rand.NextFloat(0.8f, 1.2f);
+            HoverBehavior(player, baseSpeed * speedchange); // 射击时稍微减速
 
             actionTimer++;
             if (actionTimer >= ShootInterval)
@@ -303,52 +308,74 @@ namespace BrilliantStone.Content.NPCs.Boss
             }
         }
 
-        // ----- Dash：预备30帧 → 连续冲刺2~3次（每次冲刺20帧，停顿10帧）-----
+        // ----- 修改后的Dash：每次冲刺方向根据当前玩家位置实时计算 -----
         private void DashBehavior(Player player, float baseSpeed)
         {
             dashSubTimer--;
             switch (dashSubState)
             {
                 case DashSubState.Prepare:
-                    // 预备阶段：停止移动，可播放特效
-                    NPC.velocity *= 0.9f;
+                    // 预备阶段：移动到预设的起始点，为第一次冲刺做准备
+                    // 起始点位于玩家左侧400像素，Y坐标与玩家相同
+                    float startOffsetX = 400f;
+                    float startOffsetY = 0f; // y坐标
+                    Vector2 dashStartPos = player.Center + new Vector2(-startOffsetX, startOffsetY);
+
+                    // 第一次冲刺方向：从当前Boss位置指向玩家当前位置（实时）
+                    dashFixedDir = Vector2.Normalize(player.Center - NPC.Center);
+
+                    // 向起始点移动
+                    Vector2 moveToStart = dashStartPos - NPC.Center;
+                    float distToStart = moveToStart.Length();
+                    if (distToStart > 10f)
+                    {
+                        moveToStart.Normalize();
+                        NPC.velocity = moveToStart * baseSpeed * 6f; // 快速移向起始点
+                    }
+                    else
+                    {
+                        NPC.velocity *= 0.8f; // 接近时减速
+                    }
+
+                    // 预备计时结束则进入第一次冲刺
                     if (dashSubTimer <= 0)
                     {
                         dashSubState = DashSubState.Dashing;
                         dashSubTimer = DashTime;
-                        dashCount++;
+                        dashCount = 1; // 第一次冲刺完成计数
+                        NPC.velocity = dashFixedDir * baseSpeed * 3f;
                     }
                     break;
 
                 case DashSubState.Dashing:
-                    // 冲刺：直线冲向玩家
-                    Vector2 dashDir = player.Center - NPC.Center;
-                    if (dashDir.LengthSquared() > 1f)
-                        dashDir.Normalize();
-                    NPC.velocity = dashDir * baseSpeed * 3f; // 冲刺速度
+                    // 冲刺阶段：保持固定方向飞行，不再追踪玩家
                     if (dashSubTimer <= 0)
                     {
                         if (dashCount < MaxDashes)
                         {
                             dashSubState = DashSubState.Pause;
                             dashSubTimer = PauseTime;
+                            NPC.velocity *= 0.5f; // 减速停顿
                         }
                         else
                         {
-                            // 冲刺完成，强制结束Dash阶段（回到Hover）
-                            phaseTimer = 0;
+                            phaseTimer = 0; // 冲刺结束
                         }
                     }
                     break;
 
                 case DashSubState.Pause:
-                    // 停顿：减速
+                    // 停顿阶段：减速，准备下一次冲刺
                     NPC.velocity *= 0.8f;
                     if (dashSubTimer <= 0)
                     {
+                        // 每次冲刺前重新计算方向：从当前Boss位置指向玩家当前位置
+                        dashFixedDir = Vector2.Normalize(player.Center - NPC.Center);
+
                         dashSubState = DashSubState.Dashing;
                         dashSubTimer = DashTime;
                         dashCount++;
+                        NPC.velocity = dashFixedDir * baseSpeed * 3f;
                     }
                     break;
             }
@@ -373,7 +400,7 @@ namespace BrilliantStone.Content.NPCs.Boss
                 Vector2 velocity = new Vector2(baseSpeedProj, 0).RotatedBy(angle) * dir;
                 Vector2 spawnPos = NPC.Center + new Vector2(dir * 30, -20);
                 Projectile.NewProjectile(NPC.GetSource_FromAI(), spawnPos, velocity,
-                    ModContent.ProjectileType<QueensDecree>(), damage, knockback, Main.myPlayer);
+                    ModContent.ProjectileType<QueensDecree>(), damage, knockback, Main.myPlayer); // 使用新的弹幕类
             }
         }
 
@@ -417,7 +444,7 @@ namespace BrilliantStone.Content.NPCs.Boss
             }
         }
 
-        // ----- 以下为原有辅助方法（未改动，仅保留）-----
+        // ----- 以下为原有辅助方法（未改动）-----
         private void EnterPhase2()
         {
             phase2 = true;
